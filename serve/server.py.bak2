@@ -2360,7 +2360,6 @@ def make_handler(svc: Service):
         def _openai(self, req):
             req = svc.with_shared(req, "openai")
             messages, tools, kw = openai_to_messages(req)
-            kw = {"enable_thinking": False}   # HELIOS: IQ2 never closes </think>; force no-think
             messages, validator = prepare_format(req.get("response_format"), messages)
             if validator is not None and (tools or req.get("strata_mcp")):
                 raise ValueError("structured response_format with tools/MCP is not supported")
@@ -2419,7 +2418,6 @@ def make_handler(svc: Service):
             read for the same request, rendered and tokenized - the model does not run."""
             req = svc.with_shared(req, "anthropic")
             messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked)
-            kw = {"enable_thinking": False}   # HELIOS: IQ2 never closes </think>; force no-think
             prompt = svc.template.render(messages, tools=tools, **kw)
             self._json(200, {"input_tokens": len(svc.tok.encode(prompt, parse_special=True))})
 
@@ -2427,7 +2425,6 @@ def make_handler(svc: Service):
             svc.load()
             req = svc.with_shared(req, "anthropic")
             messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked)
-            kw = {"enable_thinking": False}   # HELIOS: IQ2 never closes </think>; force no-think
             max_new = int(req.get("max_tokens") or 0)                  # 0/-1: the rest of the context
             svc.reasoning_budget(req)                         # a bad value is a 400 before anything is sent
             ids, thinking, max_new = svc.prepare(messages, tools, kw, max_new)

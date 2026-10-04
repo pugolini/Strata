@@ -506,21 +506,7 @@ class OutputParser:
         while True:
             if self.state == "reasoning":
                 i = self.buf.find(THINK_END)
-                # Fix: the model may write a tool call straight from the thinking, without </think>
-                c = self.buf.find(CALL_START) if self.schemas else -1
-                if c >= 0 and (i < 0 or c < i):
-                    if c and self.buf[:c].strip():
-                        out.append(Event("reasoning", self.buf[:c].rstrip("\n")))
-                    self.buf = self.buf[c + len(CALL_START):]
-                    self.state = "call"
-                    continue
                 if i < 0:
-                    if self.schemas:
-                        keep = max(self._hold(self.buf, (THINK_END,)), self._hold(self.buf, (CALL_START,)))
-                        if len(self.buf) > keep:
-                            out.append(Event("reasoning", self.buf[:len(self.buf) - keep]))
-                            self.buf = self.buf[len(self.buf) - keep:]
-                        return out
                     keep = self._hold(self.buf, (THINK_END,))
                     if len(self.buf) > keep:
                         out.append(Event("reasoning", self.buf[:len(self.buf) - keep]))
