@@ -1,0 +1,19 @@
+[Unit]
+Description=HELIOS AI Server (Strata + Qwen3.8-Flash-Next MoE IQ3_XXS)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/models/Strata
+ExecStart=/models/Strata/.venv/bin/python /models/Strata/serve/server.py --engine strata --config /models/Strata/strata-262k.json --port 8080
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+Environment="PATH=/opt/rocm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HSA_OVERRIDE_GFX_VERSION=12.0.1"
+LimitMEMLOCK=8589934592
+
+[Install]
+WantedBy=multi-user.target
