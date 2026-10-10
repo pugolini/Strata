@@ -1,0 +1,29 @@
+diff --git a/serve/chat_template.jinja b/serve/chat_template.jinja
+index a087700..7b4b1f3 100644
+--- a/serve/chat_template.jinja
++++ b/serve/chat_template.jinja
+@@ -55,7 +55,7 @@
+ {%- set num_sys = sysns.count %}
+ {%- set merged_system = sysns.text %}
+ {%- set reasoning_instructions = '' %}
+-{%- if enable_thinking is undefined or enable_thinking is true %}
++{%- if enable_thinking is defined and enable_thinking is true %}
+     {%- set resolved_reasoning_effort = reasoning_effort|default('xhigh') %}
+     {%- if resolved_reasoning_effort == 'high' %}
+         {%- set resolved_reasoning_effort = 'xhigh' %}
+@@ -175,10 +175,10 @@
+ {%- endfor %}
+ {%- if add_generation_prompt %}
+     {{- '<|im_start|>assistant\n' }}
+-    {%- if enable_thinking is defined and enable_thinking is false %}
+-        {{- '<think>\n\n</think>\n\n' }}
+-    {%- else %}
++    {%- if enable_thinking is defined and enable_thinking is true %}
+         {{- '<think>\n' }}
++    {%- else %}
++        {{- '<think>\n\n</think>\n\n' }}
+     {%- endif %}
+ {%- endif %}
+-{#- Unsloth fixes - developer role, merged system messages, tool calling #}
+\ No newline at end of file
++{#- Unsloth fixes - developer role, merged system messages, tool calling #}
